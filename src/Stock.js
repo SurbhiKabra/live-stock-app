@@ -36,7 +36,7 @@ class Stock extends Component {
 
   componentWillUnmount() {
     // closeing the connection
-    this.connection.close();
+    this.connection.onclose();
   }
 
   formatInitialData = (data) => {
