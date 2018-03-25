@@ -81,15 +81,21 @@ class Stock extends Component {
     let currentdate = new Date();
     let displayTime = currentdate.toLocaleString("en-US", OPTIONS);
     let prevData = this.state.messages;
+    let dataArray = [];
     data = Object.assign({}, prevData, data);
     for (let key in data) {
-      if(data[key] && prevData[key]) {
-        if(data[key].val < prevData[key].val) {
-          data[key].state = DECREASED;
-          data[key].time = displayTime;
-        } else if(data[key].val > prevData[key].val){
-          data[key].state = INCREASED;
-          data[key].time = displayTime;
+      let item = [];
+      let previousData = prevData[key];
+      let currentData = data[key];
+      if(currentData && previousData) {
+        if(currentData.val < previousData.val) {
+          currentData.state = DECREASED;
+          currentData.change = `-${(((previousData.val - currentData.val)/previousData.val)*100).toFixed(2)}%`;
+          currentData.time = displayTime;
+        } else if(currentData.val > previousData.val){
+          currentData.state = INCREASED;
+          currentData.change = `+${(((currentData.val - previousData.val)/currentData.val)*100).toFixed(2)}%`;
+          currentData.time = displayTime;
         }
       }
     }
