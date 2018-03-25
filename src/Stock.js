@@ -34,11 +34,6 @@ class Stock extends Component {
     };
   }
 
-  componentWillUnmount() {
-    // closeing the connection
-    this.connection.onclose();
-  }
-
   formatInitialData = (data) => {
     let currentdate = new Date();
     let displayTime = currentdate.toLocaleString("en-US", OPTIONS);
