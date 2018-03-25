@@ -25,7 +25,7 @@ What things you need to install the software and how to install them:
 
 ## Simple build for production
   $ npm run build
-
+Also CI is implemented through Heroku, so once the code is pushed to master, it gets auto deployed and we can access it through http://live-stock-app.herokuapp.com/
 
 ## Languages & tools
   - HTML

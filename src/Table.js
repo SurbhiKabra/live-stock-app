@@ -5,6 +5,7 @@ const SAME="same";
 const INCREASED="increased";
 const DECREASED="decreased";
 
+// Stateless component which displays teh stock data in a tabular format
 const Table = (props) => {
   return (
     <table>

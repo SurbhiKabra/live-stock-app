@@ -14,6 +14,7 @@ const OPTIONS = {
     second: 'numeric'
   };
 
+// Stateful component which fetches data and renders the Table
 class Stock extends Component {
   constructor(props) {
     super(props);
@@ -36,10 +37,13 @@ class Stock extends Component {
   }
 
   componentWillUnmount() {
-    // closeing the connection
+    // closing the connection
     this.connection.close();
   }
 
+  /*
+  * function simplifyData() accepts the data param and returns simplified data
+  */
   simplifyData = (data) => {
     let currentdate = new Date();
     let displayTime = currentdate.toLocaleString("en-US", OPTIONS);
@@ -54,6 +58,10 @@ class Stock extends Component {
     return simplifiedObj;
   }
 
+  /*
+  * function formatData() accepts the data param
+  * If it's a first time service call it simplifies the data else compares with the prevData
+  */
   formatData = (data) => {
     if(!data) return;
     let prevData = this.state.messages;
@@ -65,6 +73,10 @@ class Stock extends Component {
     }
   }
 
+  /*
+  * function compare() accepts the data param
+  * this compares teh existing state data with the en one and updates accordingly
+  */
   compare = (data) => {
     let currentdate = new Date();
     let displayTime = currentdate.toLocaleString("en-US", OPTIONS);
