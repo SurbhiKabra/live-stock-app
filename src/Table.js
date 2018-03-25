@@ -23,17 +23,17 @@ const Table = (props) => {
       </thead>
       <tbody>
         {
-          props.messages
-          .map((item, index)=>
+          Object.keys(props.messages).map((item, index)=>
              {
-              return (<tr key={item[0]+index} className="table-row">
-              <td className="table-data">{item[0]}</td>
+              let currentItem = props.messages[item];
+              return (<tr key={index} className="table-row">
+              <td className="table-data">{item}</td>
               <td
-                className=  {"table-data " + ((item[2] === SAME) ? 'same' :
-                ((item[2] === INCREASED) ? 'increased' : 'decreased'))}>
-                {item[1]}
+                className=  {"table-data " + ((currentItem.state === SAME) ? 'same' :
+                ((currentItem.state === INCREASED) ? 'increased' : 'decreased'))}>
+                {currentItem.val}
               </td>
-              <td className="table-data">{item[3]}</td>
+              <td className="table-data">{currentItem.time}</td>
             </tr>);
           })
         }

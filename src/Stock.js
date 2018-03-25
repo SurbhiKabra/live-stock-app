@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Table from './Table'
+import Table from './Table';
+import Header from './Header';
 
 const SAME="same";
 const INCREASED="increased";
@@ -23,7 +24,7 @@ class Stock extends Component {
 
   componentDidMount(){
     // this is a websocket service
-  	this.connection = new WebSocket('wss://stocks.mnet.website');
+  	this.connection = new WebSocket('ws://stocks.mnet.website');
     // listen to onmessage event
     this.connection.onmessage = evt => {
       // add the new message to state
@@ -34,64 +35,61 @@ class Stock extends Component {
     };
   }
 
-  formatInitialData = (data) => {
-    let currentdate = new Date();
-    let displayTime = currentdate.toLocaleString("en-US", OPTIONS);
-    data.map((item) => {
-      item.push(SAME);
-      item.push(displayTime);
-    });
-    return data;
+  componentWillUnmount() {
+    // closeing the connection
+    this.connection.close();
   }
 
-
-  compareData = (data) => {
+  simplifyData = (data) => {
     let currentdate = new Date();
     let displayTime = currentdate.toLocaleString("en-US", OPTIONS);
-    let prevData = this.state.messages;
-
-    for (let i=0; i<data.length; i++) {
-      let item = data[i];
-      let count=0;
-      for(let j=0; j<prevData.length; j++) {
-        let prevItem = prevData[j];
-        if(item[0] === prevItem[0]) {
-          count++;
-          if(item[1] > prevItem[1]) {
-            prevItem[2] = INCREASED;
-          } else if (item[1] < prevItem[1]) {
-            prevItem[2] = DECREASED;
-          } else {
-            prevItem[2] = SAME;
-          }
-          prevItem[1] = item[1];
-          prevItem[3] = displayTime;
-        }
-      }
-      if(!count) {
-        item.push(SAME);
-        item.push(displayTime);
-        prevData.push(item);
-      }
-    }
-    return prevData;
+    let simplifiedObj = {};
+    data.forEach((item) => {
+      return simplifiedObj[item[0]] = {
+        val: item[1],
+        state: item[2] ? item[2] : SAME,
+        time: item[3] ? item[3] : displayTime
+      };
+    })
+    return simplifiedObj;
   }
 
   formatData = (data) => {
+    if(!data) return;
     let prevData = this.state.messages;
     if(data && data.length) {
-      if(prevData && prevData.length) {
-        return (this.compareData(data));
+      if(prevData && Object.keys(prevData).length > 0) {
+        return (this.compare(this.simplifyData([...data])));
       }
-      return (this.formatInitialData(data));
+      return (this.simplifyData([...data]));
     }
+  }
+
+  compare = (data) => {
+    let currentdate = new Date();
+    let displayTime = currentdate.toLocaleString("en-US", OPTIONS);
+    let prevData = this.state.messages;
+    data = Object.assign({}, prevData, data);
+    for (let key in data) {
+      if(data[key] && prevData[key]) {
+        if(data[key].val < prevData[key].val) {
+          data[key].state = DECREASED;
+          data[key].time = displayTime;
+        } else if(data[key].val > prevData[key].val){
+          data[key].state = INCREASED;
+          data[key].time = displayTime;
+        }
+      }
+    }
+    return data;
   }
 
   render() {
     return (
       <div>
-        {
-          (this.state.messages && this.state.messages.length) ?
+      <Header />
+      {
+          (this.state.messages && Object.keys(this.state.messages).length) ?
           (<Table messages={this.state.messages} />) : ''
         }
     </div>
