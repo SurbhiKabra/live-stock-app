@@ -23,7 +23,7 @@ class Stock extends Component {
 
   componentDidMount(){
     // this is a websocket service
-  	this.connection = new WebSocket('ws://stocks.mnet.website');
+  	this.connection = new WebSocket('wss://stocks.mnet.website');
     // listen to onmessage event
     this.connection.onmessage = evt => {
       // add the new message to state
